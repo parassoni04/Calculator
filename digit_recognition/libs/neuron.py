@@ -22,3 +22,6 @@ class Neuron():
         self.weights = updatedWeights
 
     
+    def biasUpdation(self, biasGradient : float) -> None:
+        self.bias -= biasGradient
+        
