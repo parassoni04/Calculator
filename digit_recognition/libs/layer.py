@@ -1,5 +1,4 @@
 from .neuron import Neuron
-from .utilitites import transpose
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
         self.neurons: list[Neuron] = neuronList
