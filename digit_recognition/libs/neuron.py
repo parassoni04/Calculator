@@ -1,4 +1,7 @@
-from .utilitites import squish
+try : 
+    from utilities import squish
+except:
+    from .utilities import squish
 
 class Neuron():
     def __init__(self, weights: list[float], bias: float):
