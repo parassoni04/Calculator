@@ -1,6 +1,6 @@
 
 class Layer:
-    def __init__(self,neuronList):
+    def __init__(self,neuronList: list[Neuron]):
         self.layer: list[Neuron] = neuronList
     
     def computeActivtionForLayer(self) -> None:
