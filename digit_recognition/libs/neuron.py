@@ -1,4 +1,4 @@
-from utilitites import squish
+from .utilitites import squish
 
 class Neuron():
     def __init__(self, weights: list[float], bias: float):
