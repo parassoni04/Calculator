@@ -12,10 +12,10 @@ class Neuron():
 
         return squish(weightedSum + self.bias)
     
-    def weightsUpdation(self, weightsList: list[list[float], gradientOfCostFunction : list[float]]):
+    def weightsUpdation(self, weightGradients : list[float]):
         newWeight = 0
         updatedWeights = []
-        for weight,gradient in zip(weightsList,gradientOfCostFunction):
+        for weight,gradient in zip(self.weights,weightGradients):
             newWeight = weight - gradient
             updatedWeights.append(newWeight)
 
