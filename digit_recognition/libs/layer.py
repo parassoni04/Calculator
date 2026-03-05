@@ -7,3 +7,4 @@ class Layer:
         temp:list[float]
         for n in self.layer:
             temp.append(n.computeActivation())
+        return temp
