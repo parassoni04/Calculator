@@ -38,7 +38,6 @@ hiddenLayers: list[Layer] = [
 # Feed Forward: Computing Activations for the 1st Hidden Layer
 hiddenLayers[0].computeActivtionForLayer(inputActivations)
 
-
 # Feed Forward: Computing Activations for the Hidden Layers other than the 1st one
 for i in range(1, len(hiddenLayers)):
     hiddenLayers[i].computeActivtionForLayer(hiddenLayers[i-1].activations)
