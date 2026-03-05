@@ -4,8 +4,8 @@ class Layer:
         self.neurons: list[Neuron] = neuronList
         self.activations : list[float]  = []
     
-    def computeActivtionForLayer(self, activation: list[float]) -> None:
+    def computeActivtionForLayer(self, activations: list[float]) -> None:
         for neuron in self.neurons:
-            tempActivation: float = neuron.computeActivation(activation)
-            self.activations.append(tempActivation)
+            activation: float = neuron.computeActivation(activations)
+            self.activations.append(activation)
         
