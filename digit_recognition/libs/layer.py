@@ -1,10 +1,11 @@
 
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
-        self.layer: list[Neuron] = neuronList
+        self.neurons: list[Neuron] = neuronList
+        self.activations : list[float]  = []
     
-    def computeActivtionForLayer(self, activation: float) -> None:
-        temp: list[float] = []
-        for neuron in self.layer:
-            temp.append(neuron.computeActivation(activation))
+    def computeActivtionForLayer(self, activation: list[float]) -> None:
+        for neuron in self.neurons:
+            tempActivation: float = neuron.computeActivation(activation)
+            self.activations.append(tempActivation)
         
