@@ -6,6 +6,6 @@ class Layer:
     
     def computeActivtionForLayer(self, activations: list[float]) -> None:
         for neuron in self.neurons:
+            self.activations= []
             activation: float = neuron.computeActivation(activations)
             self.activations.append(activation)
-        
