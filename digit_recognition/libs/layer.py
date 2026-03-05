@@ -40,5 +40,5 @@ class Layer:
             for activation  in prevActivations:
                 wD: float = learningRate * activation * delta
                 tempList.append(wD)
-                self.gradientList.append(list)
+                self.gradientList.append(tempList)
                 
