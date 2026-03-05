@@ -15,7 +15,7 @@ class Layer:
     
     def computeDeltaForOutputLayer(self, costs: list[float]):
         self.outputDeltaList: list[float] = []
-        for cost , activation in zip(cost , self.activations):
+        for cost , activation in zip(costs , self.activations):
             tempResult:float = activation*(1-activation)*(2*cost)
             self.outputDeltaList.append(tempResult)
             
@@ -26,7 +26,7 @@ class Layer:
             for weight, delta in zip(weights, deltas):
                 wD: float = weight*delta
                 wDSum: float = wDSum + wD
-    
+
         for activation in self.activations:
             tempResult: float = activation*(1-activation)*wDSum
             self.hiddenDeltaList.append(tempResult)
