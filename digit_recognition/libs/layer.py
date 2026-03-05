@@ -1,11 +1,12 @@
 from .neuron import Neuron
+from .utilitites import transpose
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
         self.neurons: list[Neuron] = neuronList
         self.activations : list[float]  = []
         self.deltaList: list[float]= []
         self.gradientList = list[list[float]] = [[]]
-        self.gradientBais: float = 0
+        self.gradientBais: list[float] = 0
         
         
     
@@ -24,7 +25,9 @@ class Layer:
     def computeDeltaForHiddenLayer(self, deltas: list[float], weightsList: list[list[float]]):
         self.deltaList = []
         wDSum : float = 0
-        for  weights, delta in zip(weightsList, deltas):
+        transposeLists = [list(row) for row in zip(*weightsList)]
+
+        for  weights, delta in zip(transposeLists, deltas):
             wDSum : float = 0
             for weight in weights:
                 wD: float = weight*delta
@@ -35,10 +38,14 @@ class Layer:
             
     def computeGradientForLayer(self, prevActivations: list[float], learningRate: float):
         self.gradientList = [[]]
+        self.gradientBais = []
         tempList: list[float] = []
         for delta in self.deltaList:
             for activation  in prevActivations:
                 wD: float = learningRate * activation * delta
                 tempList.append(wD)
                 self.gradientList.append(tempList)
-                
+        for delta in self.deltaList:
+            bais: float = learningRate*delta
+            self.gradientBais.append(bais)
+            
