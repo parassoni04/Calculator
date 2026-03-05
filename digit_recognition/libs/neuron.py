@@ -7,6 +7,6 @@ class Neuron():
 
     def computeActivation(self, weights : list[float], bias : float, activation : float):
         for weight in weights:
-            weightedSum : float = (weight * self.activation) + self.bias
+            weightedSum : float = (weight * self.activation)
 
-        squish(weightedSum)
+        squish(weightedSum + bias)
