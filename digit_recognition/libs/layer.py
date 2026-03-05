@@ -3,8 +3,10 @@ class Layer:
     def __init__(self, neuronList: list[Neuron]):
         self.neurons: list[Neuron] = neuronList
         self.activations : list[float]  = []
-        self.hiddenDeltaList: list[float]= []
-        self.outputDeltaList: list[float]= []
+        self.deltaList: list[float]= []
+        self.gradientList = list[list[float]] = [[]]
+        self.gradientBais: float = 0
+        
         
     
     def computeActivtionForLayer(self, activations: list[float]) -> None:
@@ -14,19 +16,29 @@ class Layer:
             self.activations.append(activation)
     
     def computeDeltaForOutputLayer(self, costs: list[float]):
-        self.outputDeltaList: list[float] = []
-        for cost , activation in zip(costs , self.activations):
+        self.deltaList: list[float] = []
+        for cost, activation in zip(costs, self.activations):
             tempResult:float = activation*(1-activation)*(2*cost)
-            self.outputDeltaList.append(tempResult)
+            self.deltaList.append(tempResult)
             
     def computeDeltaForHiddenLayer(self, deltas: list[float], weightsList: list[list[float]]):
-        self.hiddenDeltaList = []
+        self.deltaList = []
         wDSum : float = 0
-        for  weights in weightsList:
-            for weight, delta in zip(weights, deltas):
+        for  weights, delta in zip(weightsList, deltas):
+            wDSum : float = 0
+            for weight in weights:
                 wD: float = weight*delta
                 wDSum: float = wDSum + wD
-
-        for activation in self.activations:
-            tempResult: float = activation*(1-activation)*wDSum
-            self.hiddenDeltaList.append(tempResult)
+            for activation in self.activations:
+                tempResult: float = activation*(1-activation)*wDSum
+                self.deltaList.append(tempResult)
+            
+    def computeGradientForLayer(self, prevActivations: list[float], learningRate: float):
+        self.gradientList = [[]]
+        tempList: list[float] = []
+        for delta in self.deltaList:
+            for activation  in prevActivations:
+                wD: float = learningRate * activation * delta
+                tempList.append(wD)
+                self.gradientList.append(list)
+                
