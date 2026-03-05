@@ -1,4 +1,4 @@
-
+from .neuron import Neuron
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
         self.neurons: list[Neuron] = neuronList
