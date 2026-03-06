@@ -1,4 +1,4 @@
-from .utilitites import computeCosts
+from .utilities import computeCosts
 from .layer import Layer
 from .neuron import Neuron
 from .load_dataset import testImgs, testLabels, trainImgs, trainLabels

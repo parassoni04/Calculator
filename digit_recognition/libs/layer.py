@@ -1,9 +1,9 @@
 try :
     from neuron import Neuron
-    from utilitites import transpose
+    from utilities import transpose
 except :
     from .neuron import Neuron
-    from .utilitites import transpose
+    from .utilities import transpose
 
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
