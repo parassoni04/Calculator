@@ -4,7 +4,7 @@ import random
 
 # Generating 128 Neurons with random weights and biases for 1st Hidden Layer
 hiddenLayer_1 = Layer([
-    Neuron([random.uniform(-1, 1) for i in range(0, 728)], random.uniform(-1, 1))
+    Neuron([random.uniform(-1, 1) for i in range(0, 784)], random.uniform(-1, 1))
     for i in range(0, 128)
 ])
 
@@ -34,12 +34,13 @@ hiddenLayers: list[Layer] = [
 ]
 
 # Hyper-parameters
-learningRate: float = 0.001
+learningRate: float = -0.001
 numberOfTrainingElements: int = 400
 numberOfTestingElements: int = 40
+numOfEpochs: int = 10
 
 # Training the model
-for i in range(0, 10):
+for i in range(0, numOfEpochs):
     for j in range(0, numberOfTrainingElements):
         # Feed Forward: Computing Activations for the 1st Hidden Layer
         hiddenLayers[0].computeActivtionForLayer(trainImgs[j])
@@ -51,14 +52,12 @@ for i in range(0, 10):
         # Feed Forward: Computing Activations for the Output Layer
         lastHiddenLayerActivations: list[float] = hiddenLayers[len(hiddenLayers) - 1].activations
         outputLayer.computeActivtionForLayer(lastHiddenLayerActivations)
-        # print("Output: ", outputLayer.activations)
 
         # Feed Forward: Computing individual costs for all neurons in Output Layer
         expectedOutputs: list[float] = [0 for k in range(0, 10)]
         expectedOutputs[trainLabels[j]] = 1
 
         costs: list[float] = computeCosts(expectedOutputs, outputLayer.activations)
-        # print("Costs: ", costs)
 
         # Back Propagation: Computing Deltas for Output Layer
         outputLayer.computeDeltaForOutputLayer(costs)
@@ -68,12 +67,12 @@ for i in range(0, 10):
         hiddenLayers[len(hiddenLayers) - 1].computeDeltaForHiddenLayer(outputLayer.deltaList, outputLayerWeightMatrix)
 
         # Back Propagation: Computing Deltas for every other Hidden Layer
-        for k in range(0, len(hiddenLayers) - 2):
+        for k in range(0, len(hiddenLayers) - 1):
             weightsMatrix: list[list[float]] = [neuron.weights for neuron in hiddenLayers[k+1].neurons]
             hiddenLayers[k].computeDeltaForHiddenLayer(hiddenLayers[k+1].deltaList, weightsMatrix)
 
         # Back Propagation: Computing Gradients for weights and biases of all Layers
-        hiddenLayers[0].computeGradientForLayer(trainImgs[0])
+        hiddenLayers[0].computeGradientForLayer(trainImgs[j])
         for k in range(1, len(hiddenLayers)):
             hiddenLayers[k].computeGradientForLayer(hiddenLayers[k-1].activations)
         outputLayer.computeGradientForLayer(hiddenLayers[len(hiddenLayers) - 1].activations)
@@ -84,6 +83,7 @@ for i in range(0, 10):
     outputLayer.doGradientDecentForLayer(learningRate)
 
     # Testing: Computing accuracy in terms of SumOfSquaredErrors
+    sse: float = 0
     for j in range(0, numberOfTestingElements):
         # Feed Forward: Computing Activations for the 1st Hidden Layer
         hiddenLayers[0].computeActivtionForLayer(testImgs[j])
@@ -95,15 +95,13 @@ for i in range(0, 10):
         # Feed Forward: Computing Activations for the Output Layer
         lastHiddenLayerActivations: list[float] = hiddenLayers[len(hiddenLayers) - 1].activations
         outputLayer.computeActivtionForLayer(lastHiddenLayerActivations)
-        print("Output: ", outputLayer.activations)
 
         # Feed Forward: Computing individual costs for all neurons in Output Layer
         expectedOutputs: list[float] = [0 for k in range(0, 10)]
         expectedOutputs[testLabels[j]] = 1
 
         costs: list[float] = computeCosts(expectedOutputs, outputLayer.activations)
-        sse: float = 0
         for k in range(0, len(costs)):
             sse += costs[k] ** 2
-        
-        print(f"{i}th Cost: {sse}")
+    avg_sse: float = sse / numberOfTestingElements
+    print(f"{i}th Cost: {avg_sse}")
