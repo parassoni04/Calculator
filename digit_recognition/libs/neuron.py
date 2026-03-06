@@ -39,8 +39,8 @@ class Neuron():
             averageWeights = averageWeights/len(gradients)
             weightGradient.append(averageWeights)
 
-        for gradient in weightGradient:
-            self.weights = self.weights - (gradient * learningRate)
+        for i in range(0, len(weightGradient)):
+            self.weights[i] = self.weights[i] - (weightGradient[i] * learningRate)
 
         self.allWeightsGradients = []
 
