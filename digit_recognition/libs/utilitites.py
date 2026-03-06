@@ -11,8 +11,7 @@ def computeCosts(expectedOutputs: list[float], computedOutputs: list[float]) -> 
     costs: list[float] = []
     for i in range(0, len(expectedOutputs)):
         error: float = expectedOutputs[i] - computedOutputs[i]
-        squaredError = error ** 2
-        costs.append(squaredError)
+        costs.append(error)
     
     return costs
 
