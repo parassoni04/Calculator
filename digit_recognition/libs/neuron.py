@@ -17,7 +17,7 @@ class Neuron():
 
         return squish(weightedSum + self.bias)
     
-    def computeGradient(self, delta : float, prevActivations : list[float]):
+    def computeGradient(self, delta : float, prevActivations : list[float]) -> None:
         weightGradient : list[float] = []
         for activation in prevActivations:
             gradient = delta * activation
@@ -33,6 +33,7 @@ class Neuron():
         weightGradient : list[float] = []
         averageWeights : float = 0
         for gradients in self.allWeightsGradients:
+            averageWeights = 0
             for gradient in gradients:
                 averageWeights += gradient
             averageWeights = averageWeights/len(gradients)
