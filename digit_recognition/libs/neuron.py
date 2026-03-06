@@ -40,13 +40,13 @@ class Neuron():
             weightGradient.append(averageWeights)
 
         for i in range(0, len(weightGradient)):
-            self.weights[i] = self.weights[i] - (weightGradient[i] * learningRate)
+            self.weights[i] = self.weights[i] + (weightGradient[i] * learningRate)
 
         self.allWeightsGradients = []
 
     def updateBias(self, learningRate : float) -> None:
         for biasGradient in self.allBiasesGradients:
-            self.bias = self.bias - (biasGradient * learningRate)
+            self.bias = self.bias + (biasGradient * learningRate)
 
         self.allBiasesGradients = []
 
