@@ -42,8 +42,12 @@ class Neuron():
         for gradient in weightGradient:
             self.weights = self.weights - gradient
 
+        self.allWeightsGradients = []
+
     def updateBias(self) -> None:
         for biasGradient in self.allBiasesGradients:
             self.bias -= biasGradient
+
+        self.allBiasesGradients = []
 
         
