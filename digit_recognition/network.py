@@ -34,7 +34,7 @@ hiddenLayers: list[Layer] = [
 ]
 
 # Hyper-parameters
-learningRate: float = -0.001
+learningRate: float = 0.001
 numberOfTrainingElements: int = 400
 numberOfTestingElements: int = 40
 numOfEpochs: int = 10
