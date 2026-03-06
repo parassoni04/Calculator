@@ -14,14 +14,3 @@ def computeCosts(expectedOutputs: list[float], computedOutputs: list[float]) -> 
         costs.append(error)
     
     return costs
-
-def transpose(matrix: list[list[float]]) -> list[list[float]]:
-    transpose: list[list[float]] = []
-
-    for i in range(0, len(matrix[0])):
-        transposedRow: list[float] = []
-        for j in range(0, len(matrix)):
-            transposedRow.append(matrix[j][i])
-        transpose.append(transposedRow)
-
-    return transpose
