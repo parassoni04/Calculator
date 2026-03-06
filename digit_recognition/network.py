@@ -1,9 +1,9 @@
 from libs import Neuron, Layer, computeCosts
-from libs import test_imgs, test_labels, train_imgs, train_labels
+from libs import testImgs, testLabels, trainImgs, trainLabels
 import random
 
 # Using the first data element's image in the training set for testing purposes
-inputActivations: list[float] = train_imgs[0]
+inputActivations: list[float] = trainImgs[0]
 
 # Generating 128 Neurons with random weights and biases for 1st Hidden Layer
 hiddenLayer_1 = Layer([
@@ -51,7 +51,7 @@ print("Output: ", outputLayer.activations)
 # Feed Forward: Computing individual costs for all neurons in Output Layer
 # Using the first data element's label in the training set for testing purposes
 expectedOutputs: list[float] = [0 for i in range(0, 10)]
-expectedOutputs[train_labels[0]] = 1
+expectedOutputs[trainLabels[0]] = 1
 print(expectedOutputs)
 
 costs: list[float] = computeCosts(expectedOutputs, outputLayer.activations)
