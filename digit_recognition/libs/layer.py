@@ -1,7 +1,10 @@
 try :
     from neuron import Neuron
+    from utilities import transpose
 except :
     from .neuron import Neuron
+    from .utilities import transpose
+
 class Layer:
     def __init__(self, neuronList: list[Neuron]):
         self.neurons: list[Neuron] = neuronList
@@ -23,7 +26,7 @@ class Layer:
     def computeDeltaForHiddenLayer(self, deltas: list[float], weightMatrix: list[list[float]]):
         self.deltaList = []
         wDSum : float = 0
-        transposedWeightMatrix = [list(row) for row in zip(*weightMatrix)]
+        transposedWeightMatrix = transpose(weightMatrix)
 
         for weights in transposedWeightMatrix:
             wDSum : float = 0
@@ -41,4 +44,4 @@ class Layer:
     def doGradientDecentForLayer(self, learningRate: float):
         for neuron in self.neurons:
             neuron.updateWeights(learningRate)
-            neuron.updateBais(learningRate)
+            neuron.updateBias(learningRate)
