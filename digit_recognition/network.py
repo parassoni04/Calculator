@@ -35,13 +35,13 @@ hiddenLayers: list[Layer] = [
 
 # Hyper-parameters
 learningRate: float = 0.001
-numberOfTrainingElements: int = 400
-numberOfTestingElements: int = 40
-numOfEpochs: int = 10
+numTrainElements: int = 400
+numTestElements: int = 40
+numEpochs: int = 10
 
 # Training the model
-for i in range(0, numOfEpochs):
-    for j in range(0, numberOfTrainingElements):
+for i in range(0, numEpochs):
+    for j in range(0, numTrainElements):
         # Feed Forward: Computing Activations for the 1st Hidden Layer
         hiddenLayers[0].computeActivtionForLayer(trainImgs[j])
 
@@ -84,7 +84,7 @@ for i in range(0, numOfEpochs):
 
     # Testing: Computing accuracy in terms of SumOfSquaredErrors
     sse: float = 0
-    for j in range(0, numberOfTestingElements):
+    for j in range(0, numTestElements):
         # Feed Forward: Computing Activations for the 1st Hidden Layer
         hiddenLayers[0].computeActivtionForLayer(testImgs[j])
 
@@ -103,5 +103,5 @@ for i in range(0, numOfEpochs):
         costs: list[float] = computeCosts(expectedOutputs, outputLayer.activations)
         for k in range(0, len(costs)):
             sse += costs[k] ** 2
-    avg_sse: float = sse / numberOfTestingElements
+    avg_sse: float = sse / numTestElements
     print(f"{i}th Cost: {avg_sse}")
