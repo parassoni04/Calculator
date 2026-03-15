@@ -1,53 +1,40 @@
-try : 
-    from utilities import squish, transpose
+# External imports
+import numpy as np
+from numpy.typing import NDArray
+
+# Custom imports
+try:
+    from utilities import squish
 except:
-    from .utilities import squish, transpose
+    from .utilities import squish
 
 class Neuron():
-    def __init__(self, weights: list[float], bias: float):
+    semiAvgBatchSize: int
+
+    def __init__(self, weights: NDArray[np.float64], bias: np.float64):
         self.weights = weights
         self.bias = bias
-        self.allWeightsGradients : list[list[float]] = []
-        self.allBiasesGradients : list[float] = []
 
-    def computeActivation(self, activations: list[float]) -> float: 
-        weightedSum: float = 0
-        for i in range(0, len(self.weights)):
-            weightedSum += (self.weights[i] * activations[i])
+        self.semiAvgWeightGradients: NDArray[np.float64] = np.empty((Neuron.semiAvgBatchSize, self.weights.shape[0]), dtype=np.float64)
+        self.semiAvgBiasGradients: NDArray[np.float64] = np.empty(Neuron.semiAvgBatchSize, dtype=np.float64)
 
-        return squish(weightedSum + self.bias)
-    
-    def computeGradient(self, delta : float, prevActivations : list[float]) -> None:
-        weightGradient : list[float] = []
-        for activation in prevActivations:
-            gradient = delta * activation
-            weightGradient.append(gradient)
+    def computeActivation(self, activations: NDArray[np.float64]) -> np.float64:
+        return squish(np.dot(self.weights, activations) + self.bias)
 
-        biasGradient : float = delta
+    def computeGradient(self, delta: np.float64, prevActivations: NDArray[np.float64]) -> tuple[NDArray[np.float64], np.float64]:
+        dw: NDArray[np.float64] = np.dot(delta, prevActivations) # basically a scalar multiplication of a 1darray
+        db: np.float64 = delta # aliasing for the sake of readability
 
-        self.allWeightsGradients.append(weightGradient)
-        self.allBiasesGradients.append(biasGradient)
+        return (dw, db)
 
-    def updateWeights(self, learningRate : float) -> None:
-        self.allWeightsGradients = transpose(self.allWeightsGradients)
-        weightGradient : list[float] = []
-        averageWeights : float = 0
-        for gradients in self.allWeightsGradients:
-            averageWeights = 0
-            for gradient in gradients:
-                averageWeights += gradient
-            averageWeights = averageWeights/len(gradients)
-            weightGradient.append(averageWeights)
+    def setSemiAvgDwDb(self, dW: NDArray[np.float64], dB: NDArray[np.float64], idx: int) -> None:
+        self.semiAvgWeightGradients[idx] = dW.mean(axis=0) # averages values along the columns in a 2darray and returns a 1darray
+        self.semiAvgBiasGradients[idx] = dB.mean()
 
-        for i in range(0, len(weightGradient)):
-            self.weights[i] = self.weights[i] + (weightGradient[i] * learningRate)
+    def updateWeights(self, learningRate: float) -> None:
+        fullyAvgWeightGradients: NDArray[np.float64] = self.semiAvgWeightGradients.mean(axis=0)
+        self.weights += np.dot(learningRate, fullyAvgWeightGradients)
 
-        self.allWeightsGradients = []
-
-    def updateBias(self, learningRate : float) -> None:
-        for biasGradient in self.allBiasesGradients:
-            self.bias = self.bias + (biasGradient * learningRate)
-
-        self.allBiasesGradients = []
-
-        
+    def updateBias(self, learningRate: float) -> None:
+        fullyAvgBiasGradient: np.float64 = self.semiAvgBiasGradients.mean()
+        self.bias += np.multiply(learningRate, fullyAvgBiasGradient)

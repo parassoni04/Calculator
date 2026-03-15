@@ -1,27 +1,17 @@
-import math
+import numpy as np
+from numpy.typing import NDArray
 
-def squish(weightedSum: float) -> float:
-    e: float = math.e
-    exponentiatedWeightedSum: float = e ** (-1 * weightedSum)
-    activation: float = 1 / (1 + exponentiatedWeightedSum)
-
+def squish(weightedSum: np.float64) -> np.float64:
+    activation: np.float64 = 1 / (1 + np.exp(-weightedSum))
     return activation
 
-def computeCosts(expectedOutputs: list[float], computedOutputs: list[float]) -> list[float]:
-    costs: list[float] = []
-    for i in range(0, len(expectedOutputs)):
-        error: float = expectedOutputs[i] - computedOutputs[i]
-        costs.append(error)
-    
-    return costs
+def computeErrors(expectedOutputs: NDArray[np.uint8], computedOutputs: NDArray[np.float64]) -> NDArray[np.float64]:
+    return expectedOutputs - computedOutputs
 
-def transpose(matrix: list[list[float]]) -> list[list[float]]:
-    transpose: list[list[float]] = []
+def isAccurate(expectedOutputs: NDArray[np.uint8], computedOutputs: NDArray[np.float64]) -> bool:
+    for i in range(0, computedOutputs.shape[0]):
+        if computedOutputs[i] < 0.5: computedOutputs[i] = 0
+        else: computedOutputs[i] = 1
 
-    for i in range(0, len(matrix[0])):
-        transposedRow: list[float] = []
-        for j in range(0, len(matrix)):
-            transposedRow.append(matrix[j][i])
-        transpose.append(transposedRow)
-
-    return transpose
+    if np.dot(expectedOutputs, computedOutputs) == 1: return True
+    else: return False

@@ -1,47 +1,39 @@
-try :
-    from neuron import Neuron
-    from utilities import transpose
-except :
-    from .neuron import Neuron
-    from .utilities import transpose
+# external imports
+import numpy as np
+from numpy.typing import NDArray
 
 class Layer:
-    def __init__(self, neuronList: list[Neuron]):
-        self.neurons: list[Neuron] = neuronList
-        self.activations : list[float]  = []
-        self.deltaList: list[float]= []
+    preSemiAvgBatchSize: int
 
-    def computeActivtionForLayer(self, activations: list[float]) -> None:
-        self.activations= []
-        for neuron in self.neurons:
-            activation: float = neuron.computeActivation(activations)
-            self.activations.append(activation)
+    def __init__(self, neurons: NDArray[np.object_]):
+        self.neurons: NDArray[np.object_] = neurons
+        self.activations: NDArray[np.float64] = np.zeros(self.neurons.shape[0])
+        self.deltas: NDArray[np.float64] = np.zeros(self.neurons.shape[0])
 
-    def computeDeltaForOutputLayer(self, costs: list[float]):
-        self.deltaList: list[float] = []
-        for cost, activation in zip(costs, self.activations):
-            tempResult: float = activation*(1-activation)*(2*cost)
-            self.deltaList.append(tempResult)
+        self.preSemiAvgWeightGradients: NDArray[np.float64] = np.empty((self.neurons.shape[0], Layer.preSemiAvgBatchSize, self.neurons[0].weights.shape[0]), dtype=np.float64)
+        self.preSemiAvgBiasGradients: NDArray[np.float64] = np.empty((self.neurons.shape[0], Layer.preSemiAvgBatchSize), dtype=np.float64)
 
-    def computeDeltaForHiddenLayer(self, deltas: list[float], weightMatrix: list[list[float]]):
-        self.deltaList = []
-        wDSum : float = 0
-        transposedWeightMatrix = transpose(weightMatrix)
+    def computeActivtionForLayer(self, activations: NDArray[np.float64]) -> None:
+        for i in range(0, self.neurons.shape[0]):
+            self.activations[i] = self.neurons[i].computeActivation(activations)
 
-        for weights in transposedWeightMatrix:
-            wDSum : float = 0
-            for weight, delta in zip(weights, deltas):
-                wD: float = weight*delta
-                wDSum: float = wDSum + wD
-            for activation in self.activations:
-                tempResult: float = activation*(1-activation)*wDSum
-                self.deltaList.append(tempResult)
+    def computeDeltaForOutputLayer(self, errors: NDArray[np.float64]) -> None:
+        self.deltas: NDArray[np.float64] = self.activations * (1 - self.activations) * errors
 
-    def computeGradientForLayer(self, prevActivations: list[float]):
-        for delta, neuron in zip(self.deltaList, self.neurons):
-            neuron.computeGradient(delta, prevActivations)
+    def computeDeltaForHiddenLayer(self, deltas: NDArray[np.float64], weightMatrix: NDArray[np.float64]) -> None:
+        self.deltas: NDArray[np.float64] = self.activations * (1 - self.activations) * np.dot(weightMatrix.transpose(), deltas)
 
-    def doGradientDecentForLayer(self, learningRate: float):
+    def computeGradientForLayer(self, prevActivations: NDArray[np.float64], idx: int) -> None:
+        for i in range(0, self.neurons.shape[0]):
+            dw, db = self.neurons[i].computeGradient(self.deltas[i], prevActivations)
+            self.preSemiAvgWeightGradients[i, idx] = dw
+            self.preSemiAvgBiasGradients[i, idx] = db
+
+    def computeSemiAvgGradientsForLayer(self, idx: int) -> None:
+        for i in range(0, self.neurons.shape[0]):
+            self.neurons[i].setSemiAvgDwDb(self.preSemiAvgWeightGradients[i], self.preSemiAvgBiasGradients[i], idx)
+
+    def doGradientDescentForLayer(self, learningRate: float) -> None:
         for neuron in self.neurons:
             neuron.updateWeights(learningRate)
             neuron.updateBias(learningRate)
