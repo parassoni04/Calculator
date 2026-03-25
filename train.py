@@ -16,13 +16,15 @@ trainDataset = torchvision.datasets.MNIST(
     transform = transform.ToTensor()
 )
 
-trainLoader = DataLoader(trainDataset, batch_size = 100, shuffle = True)
+trainLoader = DataLoader(trainDataset, batch_size = 64, shuffle = True)
+
+epochs = 10
+lr = 0.001
 
 model = NeuralNetwork().to(device)
 lossFunction = nn.CrossEntropyLoss()
-optimizer = optium.Adam(model.parameters(), lr = 0.001)
+optimizer = optium.Adam(model.parameters(), lr)
 
-epochs = 10
 
 for e in range(epochs):
     for images, labels in trainLoader:
