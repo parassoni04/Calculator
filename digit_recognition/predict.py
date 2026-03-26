@@ -41,4 +41,4 @@ with torch.no_grad():
     
     accuracy : float = (correct/total) * 100
 
-print(f"Accuracy : {accuracy : .2f}%")
+print(f"Test Accuracy : {accuracy : .2f}%")

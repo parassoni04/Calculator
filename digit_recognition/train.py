@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 import torchvision
 import torchvision.transforms as transform
 from model import NeuralNetwork
+from torch.utils.data import random_split
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -21,8 +22,14 @@ trainDataset = torchvision.datasets.MNIST(
         ])
 )
 
-# Making batches for training
+trainSize = 50000
+valSize = 10000
+
+trainDataset, valDataset = random_split(trainDataset, [trainSize, valSize])
+
+# Making batches for training and validation
 trainLoader = DataLoader(trainDataset, batch_size = 64, shuffle = True)
+valLoader = DataLoader(valDataset, batch_size = 64, shuffle = False)
 
 model = NeuralNetwork().to(device)
 lossFunction = nn.CrossEntropyLoss() # Calculating Loss
@@ -31,24 +38,47 @@ optimizer = optim.Adam(model.parameters(), lr = 0.001) # Function for optimizing
 epochs = 10
 
 for e in range(epochs):
-    correct = 0
-    total = 0
+
+    # Training
+    model.train()
+    trainCorrect = 0
+    trainTotal = 0
+
     for images, labels in trainLoader:
         images, labels = images.to(device), labels.to(device)
+
         optimizer.zero_grad() # Zeroes the gradient list
-
         output = model(images)
-        predicted =output.argmax(dim=1)
         loss = lossFunction(output, labels)
-
-        correct += (predicted == labels).sum().item()
-        total += labels.size(0)
 
         loss.backward() # Calculating gradient
         optimizer.step()
+
+        predicted =output.argmax(dim=1)
+        trainCorrect += (predicted == labels).sum().item()
+        trainTotal += labels.size(0)
+
+    trainAcc = (trainCorrect/trainTotal) * 100
     
-    accuracy = (correct/total) * 100
+    # Validation
+    model.eval()
+    valCorrect = 0
+    valTotal = 0
 
-    print(f"Epoch : {e + 1}, Loss : {loss.item() : .4f}, Accuracy : {accuracy : .2f}%")
+    with torch.no_grad():
+        for images, labels in valLoader:
+            images, labels = images.to(device), labels.to(device)
 
-torch.save(model.state_dict(),"./CNN/mnist_model.pth") # Saving model parameters
+            output = model(images)
+            predicted = output.argmax(dim=1)
+
+            valCorrect += (predicted == labels).sum().item()
+            valTotal += labels.size(0)
+
+    valAcc = (valCorrect/valTotal) * 100
+
+
+
+    print(f"Epoch : {e + 1}, Loss : {loss.item() : .4f}, Train Accuracy : {trainAcc : .2f}%, Validation Accuracy : {valAcc : .2f}%")
+
+torch.save(model.state_dict(),"./digit_recognition/mnist_model.pth") # Saving model parameters
