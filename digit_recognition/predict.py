@@ -9,17 +9,23 @@ from torch.utils.data import DataLoader
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Using MNIST dataset from torchvision to test model 
-testDataset = torchvision.datasets.MNIST(
+testDataset = torchvision.datasets.EMNIST(
     root = "./digit_recognition",
+    split = "byclass",
     train = False,
     download = False,
-    transform = transform.ToTensor()
+    transform = transform.Compose([
+        transform.RandomRotation((-90, -90)),
+        transform.RandomHorizontalFlip(p=1),
+        transform.ToTensor(),
+        transform.Normalize((0.5,),(0.5,))
+        ])
 )
 
 # Making batches for testing
 testLoader = DataLoader(testDataset, batch_size = 1000, shuffle = False)
 
-path = "./digit_recognition/mnist_model.pth"
+path = "./digit_recognition/emnist_model.pth"
 
 model = NeuralNetwork().to(device)
 

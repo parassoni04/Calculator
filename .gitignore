@@ -1,3 +1,5 @@
 __pycache__/
 mnist_model.pth
+emnist_model.pth
 MNIST
+EMNIST
