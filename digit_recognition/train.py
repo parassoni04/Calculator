@@ -9,6 +9,8 @@ import torchvision.transforms as transform
 from model import NeuralNetwork
 from torch.utils.data import random_split
 
+from utils import getParamCount
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Using MNIST dataset from torchvision to train model
@@ -39,6 +41,8 @@ lossFunction = nn.CrossEntropyLoss() # Calculating Loss
 optimizer = optim.Adam(model.parameters(), lr = 0.001) # Function for optimizing parameters
 
 epochs = 20
+
+print(f"Total Free Parameters: {getParamCount(model)}")
 
 for e in range(epochs):
 
